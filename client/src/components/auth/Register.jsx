@@ -3,7 +3,7 @@ import { Form, Button, Container, Row, Col, Card, Spinner } from 'react-bootstra
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import '../assets/styles/register.css';
+import '../../assets/styles/register.css';
 import { Eye, EyeSlash } from 'react-bootstrap-icons';
 
 const Register = () => {

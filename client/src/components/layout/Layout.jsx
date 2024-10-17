@@ -3,7 +3,7 @@ import { Outlet, Link, useNavigate } from 'react-router-dom';
 import { Navbar, Nav, Container, Button } from 'react-bootstrap';
 import { GiHamburgerMenu } from 'react-icons/gi';
 import { FaHome, FaUser, FaBook, FaSignOutAlt } from 'react-icons/fa';
-import '../assets/styles/layout.css';
+import '../../assets/styles/layout.css';
 import { toast } from 'react-toastify';
 
 const Layout = () => {
@@ -15,9 +15,9 @@ const Layout = () => {
      };
 
      const handleLogout = () => {
+          localStorage.removeItem('token');
           navigate("/login");
-          toast.success("Logged Out Successfully")
-          localStorage.clear();
+          toast.success("Logged Out Successfully");
      };
 
      return (
@@ -37,24 +37,22 @@ const Layout = () => {
                <div className={ `d-flex flex-column flex-md-row ${isSidebarOpen ? 'sidebar-open' : 'sidebar-closed'}` }>
                     {/* Sidebar */ }
                     <div className={ `sidebar ${isSidebarOpen ? 'open' : 'closed'}` }>
-                         <Button className="toggle-btn" onClick={ toggleSidebar }>
+                         <Button className="toggle-btn" onClick={ toggleSidebar } aria-label="Toggle Sidebar">
                               <GiHamburgerMenu />
                          </Button>
-                         <h4 className={ `sidebar-title ${isSidebarOpen ? 'visible' : 'hidden'}` } style={ { marginTop: 40 } }>Menu</h4>
+                         <h4 className={ `sidebar-title ${isSidebarOpen ? 'visible' : 'hidden'}` } style={ { marginTop: '50px' } }>
+                              Menu
+                         </h4>
                          <Nav className="flex-column">
-                              <Nav.Link as={ Link } to="/" className="nav-item">
-                                   { isSidebarOpen && <FaHome /> } { isSidebarOpen && 'Dashboard' }
-                              </Nav.Link>
-                              <Nav.Link as={ Link } to="/profile" className="nav-item">
-                                   { isSidebarOpen && <FaUser /> } { isSidebarOpen && 'Profile' }
-                              </Nav.Link>
-                              <Nav.Link as={ Link } to="/books" className="nav-item">
-                                   { isSidebarOpen && <FaBook /> } { isSidebarOpen && 'Books' }
-                              </Nav.Link>
+                              <Link to="/dashboard" className="nav-link"><FaHome /> Dashboard</Link>
+                              <Link to="/profile" className="nav-link"><FaUser /> Profile</Link>
+                              <Link to="/books" className="nav-link"><FaBook /> Books</Link>
+                              <Link to="/borrowed" className="nav-link"><FaBook /> Borrowed Books</Link>
                          </Nav>
                     </div>
 
-                    <div className="content">
+                    {/* Main Content */ }
+                    <div className="main-content">
                          <Outlet />
                     </div>
                </div>

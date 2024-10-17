@@ -29,4 +29,4 @@ app.get('/', (req, res) => {
 
 // Routes
 app.use('/api/auth', authRoutes);
-app.use('/api/library', libraryRoutes); 
+app.use('/api/library', libraryRoutes);

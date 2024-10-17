@@ -1,12 +1,16 @@
 const express = require('express');
 const router = express.Router();
-const { Book } = require('../models/BookSchema');
+const Book = require('../models/BookSchema');
 const authMiddleware = require('../middleware/authMiddleware');
 
 // Add Book (Protected)
 router.post('/addbook', authMiddleware, async (req, res) => {
      try {
-          const newBook = new Book(req.body);
+          const newBook = new Book({
+               ...req.body,
+               createdAt: new Date(),
+               updatedAt: new Date(),
+          });
           await newBook.save();
           res.status(200).send({ success: true, message: 'Book added successfully', book: newBook });
      } catch (error) {
@@ -17,7 +21,11 @@ router.post('/addbook', authMiddleware, async (req, res) => {
 // Update Book (Protected)
 router.put('/updatebook/:id', authMiddleware, async (req, res) => {
      try {
-          const book = await Book.findByIdAndUpdate(req.params.id, req.body, { new: true });
+          const book = await Book.findByIdAndUpdate(
+               req.params.id,
+               { ...req.body, updatedAt: new Date() },
+               { new: true }
+          );
           if (!book) {
                return res.status(404).send({ success: false, message: 'Book not found' });
           }
@@ -47,6 +55,19 @@ router.get('/books', async (req, res) => {
           res.status(200).send({ success: true, message: 'Books retrieved successfully', data: books });
      } catch (error) {
           res.status(500).send({ success: false, message: 'Error retrieving books', error });
+     }
+});
+
+// View a Single Book by ID
+router.get('/books/:id', async (req, res) => {
+     try {
+          const book = await Book.findById(req.params.id);
+          if (!book) {
+               return res.status(404).send({ success: false, message: 'Book not found' });
+          }
+          res.status(200).send({ success: true, message: 'Book retrieved successfully', data: book });
+     } catch (error) {
+          res.status(500).send({ success: false, message: 'Error retrieving book', error });
      }
 });
 

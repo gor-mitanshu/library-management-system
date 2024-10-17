@@ -1,15 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Form, Button, Container, Row, Col, Card, Spinner } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios'; // Assuming you use Axios for API calls
-import { toast } from 'react-toastify'; // For displaying notifications
-import '../assets/styles/login.css';
+import axios from 'axios';
+import { toast } from 'react-toastify';
+import '../../assets/styles/login.css';
 
 const Login = () => {
      const [formData, setFormData] = useState({ email: '', password: '', rememberMe: false });
      const [errors, setErrors] = useState({});
      const [loading, setLoading] = useState(false);
      const navigate = useNavigate();
+
+     useEffect(() => {
+          const savedEmail = localStorage.getItem('email');
+          const savedPassword = localStorage.getItem('password');
+          if (savedEmail) {
+               setFormData((prevData) => ({ ...prevData, email: savedEmail }));
+          }
+          if (savedPassword) {
+               setFormData((prevData) => ({ ...prevData, password: savedPassword }));
+          }
+     }, []);
 
      const handleChange = (e) => {
           const { name, value, type, checked } = e.target;
@@ -45,25 +56,31 @@ const Login = () => {
           if (validateForm()) {
                try {
                     setLoading(true);
-                    const response = await axios.post('http://localhost:8080/api/auth/login', formData); // Replace with your login API URL
+                    const response = await axios.post('http://localhost:8080/api/auth/login', formData);
                     setLoading(false);
 
-                    // Handle successful login
                     console.log('Login successful', response.data);
-                    // If your API returns a token, store it as well
                     if (response.data.token) {
                          localStorage.setItem('token', response.data.token);
                     }
 
-                    toast.success('Login successful!'); // Show success toast
-                    navigate('/dashboard'); // Redirect to the dashboard
+                    if (formData.rememberMe) {
+                         localStorage.setItem('email', formData.email);
+                         localStorage.setItem('password', formData.password);
+                    } else {
+                         localStorage.removeItem('email');
+                         localStorage.removeItem('password');
+                    }
+
+                    toast.success('Login successful!');
+                    navigate('/dashboard');
                } catch (error) {
                     setLoading(false);
                     if (error.response) {
-                         setErrors({ form: error.response.data.message }); // Show backend error message
-                         toast.error(error.response.data.message); // Show error toast
+                         setErrors({ form: error.response.data.message });
+                         toast.error(error.response.data.message);
                     } else {
-                         toast.error('Something went wrong!'); // General error toast
+                         toast.error('Something went wrong!');
                     }
                }
           }
