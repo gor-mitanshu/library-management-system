@@ -1,0 +1,90 @@
+.layout {
+    min-height: 100vh;
+    background-color: #f8f9fa; /* Main background color */
+}
+
+.navbar-custom {
+    background: linear-gradient(90deg, #007bff, #6610f2); /* Gradient background */
+    color: #ffffff; /* Text color */
+}
+
+.navbar-custom .nav-link {
+    color: #ffffff; /* Nav link color */
+}
+
+.navbar-custom .nav-link:hover {
+    color: #ffdd57; /* Hover color for nav items */
+}
+
+.sidebar {
+    background-color: #343a40; /* Sidebar background */
+    padding: 15px;
+    width: 250px; /* Fixed width for larger screens */
+    transition: width 0.3s; /* Smooth transition for opening/closing */
+    color: #ffffff; /* Sidebar text color */
+    height: calc(100vh - 56px); /* Full height */
+    position: relative; /* Position relative for toggle button */
+}
+
+.sidebar.closed {
+    width: 60px; /* Width when closed */
+    overflow: hidden; /* Prevent overflow */
+}
+
+.sidebar.open {
+    width: 250px; /* Width when open */
+}
+
+.toggle-btn {
+    background: none; /* No background */
+    border: none; /* No border */
+    color: #ffffff; /* Icon color */
+    font-size: 24px; /* Increase icon size */
+    position: absolute; /* Position it at the top */
+    top: 10px; /* Top margin */
+    left: 10px; /* Left margin */
+    cursor: pointer; /* Change cursor on hover */
+}
+
+.sidebar-title {
+    margin: 20px 0; /* Margin for title */
+    transition: opacity 0.3s; /* Smooth opacity transition */
+}
+
+.sidebar-title.hidden {
+    opacity: 0; /* Hide title */
+}
+
+.sidebar-title.visible {
+    opacity: 1; /* Show title */
+}
+
+.content {
+    padding: 20px;
+    background-color: #ffffff; /* Content background color */
+    flex-grow: 1; /* Allow content to grow */
+}
+
+.nav-item {
+    font-weight: 500;
+    color: #ffffff; /* Nav item text color */
+}
+
+.nav-item:hover {
+    color: #007bff; /* Hover color for nav items */
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        width: 100%; /* Full width on smaller screens */
+        padding: 10px;
+    }
+
+    .navbar-custom {
+        text-align: center; /* Center navbar text on small screens */
+    }
+
+    .toggle-btn {
+        top: 15px; /* Adjust button position on small screens */
+    }
+}
