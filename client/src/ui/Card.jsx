@@ -9,10 +9,11 @@ const Card = ({
      handleEditClick,
      handleCancelClick,
      children,
-     handleAdd
+     handleAdd,
+     ...props
 }) => {
      return (
-          <div className="card">
+          <div className="card" { ...props }>
                <div className="card-header d-flex justify-content-between align-items-center">
                     <h5 className="card-title mb-2">{ title }</h5>
                     { editMode !== undefined ? (

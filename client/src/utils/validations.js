@@ -87,13 +87,6 @@ export const registerValidations = (inputValues) => {
      if ('dob' in inputValues) {
           if (inputValues.dob === "") {
                errors.dob = "Date of birth is required.";
-          } else {
-               const birthDate = new Date(inputValues.dob);
-               const today = new Date();
-               const age = today.getFullYear() - birthDate.getFullYear();
-               if (age < 18 || age > 100) {
-                    errors.dob = "You must be at least 18 years old.";
-               }
           }
      }
 

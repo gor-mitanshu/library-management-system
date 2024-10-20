@@ -10,12 +10,11 @@ import Profile from './components/layout/profile/Profile';
 import BookList from './components/layout/book/BookList';
 import BookDetail from './components/layout/book/BookDetail';
 import BorrowedBooks from './components/layout/book/BorrowBook';
-// import Layout from './demo/Layout'
+import AddBook from './components/layout/book/AddBook';
 
 function App () {
   return (
     <>
-      {/* <Layout /> */ }
       <Routes>
         <Route path='/login' element={ <Login /> } />
         <Route path='/register' element={ <Register /> } />
@@ -27,6 +26,7 @@ function App () {
           <Route path='profile' element={ <Profile /> } />
           <Route path="/books" element={ <BookList /> } />
           <Route path="/books/:id" element={ <BookDetail /> } />
+          <Route path="/books/add" element={ <AddBook /> } />
           <Route path="/borrowed" element={ <BorrowedBooks /> } />
         </Route>
       </Routes>

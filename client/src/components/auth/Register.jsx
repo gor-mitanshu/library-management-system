@@ -5,7 +5,6 @@ import { toast } from 'react-toastify';
 import '../../assets/styles/register.css';
 import FormWrapper from '../../ui/FormWrapper';
 import { registerValidations } from '../../utils/validations';
-// import defaultImage from '../../assets/images/default.png'
 
 const Register = () => {
      const [formData, setFormData] = useState({
@@ -17,7 +16,7 @@ const Register = () => {
           gender: '',
           address: '',
           password: '',
-          image: null, // Added image field
+          image: null,
      });
      const [errors, setErrors] = useState({});
      const [loading, setLoading] = useState(false);

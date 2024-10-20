@@ -16,7 +16,7 @@ const profileInitialState = {
      marital_status: "",
      email: "",
      phone: "",
-     current_address: "",
+     address: "",
 }
 
 const Profile = () => {
@@ -90,7 +90,7 @@ const Profile = () => {
                          } else if (section === "address") {
                               setFormErrors((prevFormErrors) => ({
                                    ...prevFormErrors,
-                                   current_address: "",
+                                   address: "",
                               }));
                          }
                     }
@@ -122,7 +122,7 @@ const Profile = () => {
                } else if (section === "address") {
                     setFormErrors((prevFormErrors) => ({
                          ...prevFormErrors,
-                         current_address: "",
+                         address: "",
                     }));
                }
           }
@@ -166,12 +166,6 @@ const Profile = () => {
                if (!formData.gender) {
                     errors.gender = "Gender is required";
                }
-               if (!formData.blood_group.trim()) {
-                    errors.blood_group = "Blood group is required";
-               }
-               if (!formData.marital_status.trim()) {
-                    errors.marital_status = "Marital status is required";
-               }
           }
           // Contact Information Section
           if (editMode.contactInformation) {
@@ -184,8 +178,8 @@ const Profile = () => {
           }
           // Address Section
           if (editMode.address) {
-               if (!formData.current_address) {
-                    errors.current_address = "Address is required";
+               if (!formData.address) {
+                    errors.address = "Address is required";
                }
           }
 
@@ -196,7 +190,7 @@ const Profile = () => {
                try {
                     if (accessToken) {
                          const response = await axios.put(
-                              `${process.env.REACT_APP_API}/api/auth/update-profile`, formData, {
+                              `${process.env.REACT_APP_API}/api/auth/update-profile/${formData._id}`, formData, {
                               headers: {
                                    Authorization: `Bearer ${accessToken}`,
                               },
@@ -224,17 +218,14 @@ const Profile = () => {
                changedData.lastName !== initialUser.current.lastName ||
                changedData.dob !== initialUser.current.dob ||
                changedData.gender !== initialUser.current.gender ||
-               changedData.blood_group !== initialUser.current.blood_group ||
-               changedData.marital_status !== initialUser.current.marital_status ||
                changedData.email !== initialUser.current.email ||
                changedData.phone !== initialUser.current.phone ||
-               changedData.current_address !== initialUser.current.current_address
+               changedData.address !== initialUser.current.address
           );
      };
 
      const formatedDate = user.dob;
      const newDate = new Date(formatedDate);
-
      return (
           <div>
                <div>
@@ -263,9 +254,10 @@ const Profile = () => {
                                              <div className="user-details d-flex align-items-center flex-wrap">
                                                   <div className="py-4 py-xl-0 col-12 col-xl-5 text-center">
                                                        <img
+                                                            // src={ `${process.env.REACT_APP_API}/images/${user.image}` }
                                                             src={ 'https://via.placeholder.com/600x800' }
                                                             alt="User"
-                                                            className="h-100 w-75 rounded-circle"
+                                                            className="h-50 w-75 rounded-circle"
                                                        />
                                                   </div>
                                                   <div className="col-12 col-xl-7">
@@ -295,12 +287,7 @@ const Profile = () => {
                                    </Card>
 
                                    {/* Contact Information */ }
-                                   <Card
-                                        title="Contact Information"
-                                   // editMode={editMode.contactInformation}
-                                   // handleEditClick={() => handleEditClick("contactInformation")}
-                                   // handleCancelClick={() => handleCancelClick("contactInformation")}
-                                   >
+                                   <Card title="Contact Information" style={ { marginTop: "10px" } }>
                                         { editMode.contactInformation ? (
                                              <>
                                                   <ContactForm
@@ -344,7 +331,7 @@ const Profile = () => {
                                         ) : (
                                              <>
                                                   <p>
-                                                       { user.current_address ? user.current_address : "-" }
+                                                       { user.address ? user.address : "-" }
                                                   </p>
                                              </>
                                         ) }

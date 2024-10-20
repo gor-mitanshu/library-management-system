@@ -11,17 +11,26 @@ const path = require('path');
 // Set up Multer for image uploads
 const storage = multer.diskStorage({
      destination: (req, file, cb) => {
-          const imagesFolder = path.join(__dirname, '..', 'images');
-          if (!fs.existsSync(imagesFolder)) {
-               fs.mkdirSync(imagesFolder);
+          // const imagesFolder = path.join(__dirname, '..', 'images');
+          const folderPath = './images/';
+          if (!fs.existsSync(folderPath)) {
+               fs.mkdirSync(folderPath);
           }
-          cb(null, imagesFolder);
+          cb(null, folderPath);
      },
      filename: (req, file, cb) => {
-          cb(null, Date.now() + path.extname(file.originalname));
+          const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+          const fileExtension = path.extname(file.originalname);
+          const fileName = uniqueSuffix + fileExtension;
+          cb(null, fileName);
      }
 });
-const upload = multer({ storage });
+const upload = multer({
+     storage: storage,
+     limits: {
+          fileSize: 1024 * 1024 * 5
+     }
+});
 
 // Helper function to omit sensitive data
 const omitPassword = (user) => {
@@ -81,7 +90,8 @@ router.post('/register', upload.single('image'), async (req, res) => {
                address,
                gender,
                dob,
-               image: req.file ? req.file.path : null
+               image: req.file ? req.file.filename : null,
+               role: 'user'
           });
 
           await newUser.save();
@@ -109,7 +119,7 @@ router.post('/login', async (req, res) => {
           }
 
           // Generate JWT token
-          const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+          const token = jwt.sign({ userId: user._id, user: user }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
           res.status(200).send({ success: true, message: 'Login successful', token });
      } catch (error) {

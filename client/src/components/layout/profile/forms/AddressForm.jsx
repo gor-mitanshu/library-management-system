@@ -7,21 +7,21 @@ const AddressForm = ({ formData, handleInputChange, formErrors, handleCancel }) 
                     <div className="col-md-12">
                          <div className="form-group row">
                               <div className="col mb-3">
-                                   <label htmlFor="current_address" className="font-weight-bold">
+                                   <label htmlFor="address" className="font-weight-bold">
                                         Current Address:
                                    </label>
                                    <textarea
                                         type="text"
                                         className="form-control no-focus-box-shadow"
                                         placeholder="Full Address"
-                                        name="current_address"
-                                        value={ formData.current_address }
+                                        name="address"
+                                        value={ formData.address }
                                         onChange={ handleInputChange }
                                         style={ { height: "120px" } }
                                    />
-                                   { formErrors.current_address && (
+                                   { formErrors.address && (
                                         <small className="text-danger">
-                                             { formErrors.current_address }
+                                             { formErrors.address }
                                         </small>
                                    ) }
                               </div>

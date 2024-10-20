@@ -1,0 +1,21 @@
+.book-card {
+    height: 100%;
+}
+
+.book-cover {
+    object-fit: cover;
+    height: 250px; /* Adjust to your preferred height */
+}
+
+.book-description {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3; /* Show 3 lines before truncating */
+    -webkit-box-orient: vertical;
+}
+
+.book-card .card-body {
+    display: flex;
+    flex-direction: column;
+}

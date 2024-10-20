@@ -63,7 +63,6 @@ const Login = () => {
                     const response = await axios.post('http://localhost:8080/api/auth/login', formData);
                     setLoading(false);
 
-                    console.log('Login successful', response.data);
                     if (response.data.token) {
                          localStorage.setItem('token', response.data.token);
                     }

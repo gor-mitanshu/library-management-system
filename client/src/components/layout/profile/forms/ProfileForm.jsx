@@ -1,9 +1,21 @@
+import React from "react";
+
 const ProfileForm = ({
      formData,
      handleInputChange,
      formErrors,
      handleCancel,
 }) => {
+     // Format the date as YYYY-MM-DD
+     const formattedDate = formData.dob ? new Date(formData.dob).toISOString().split('T')[0] : '';
+
+     // Static gender options
+     const genderOptions = [
+          { label: "Male", value: "Male" },
+          { label: "Female", value: "Female" },
+          { label: "Other", value: "Other" },
+     ];
+
      return (
           <>
                <div className="pb-3 text-center">
@@ -40,7 +52,7 @@ const ProfileForm = ({
                                    </div>
                               </div>
                          </div>
-                         {/* lastname */ }
+                         {/* Lastname */ }
                          <div className="col-md-6">
                               <div className="form-group row">
                                    <div className="col mb-3">
@@ -72,9 +84,8 @@ const ProfileForm = ({
                                         <input
                                              type="date"
                                              className="form-control no-focus-box-shadow"
-                                             placeholder="Date of Birth"
                                              name="dob"
-                                             value={ formData.dob }
+                                             value={ formattedDate }
                                              onChange={ handleInputChange }
                                         />
                                         { formErrors.dob && (
@@ -89,101 +100,26 @@ const ProfileForm = ({
                                    <div className="col mb-2">
                                         <label className="form-label">Gender:</label>
                                         <div>
-                                             <div className="form-check form-check-inline">
-                                                  <input
-                                                       className="form-check-input"
-                                                       type="radio"
-                                                       name="gender"
-                                                       id="Male"
-                                                       value="Male"
-                                                       checked={ formData.gender === "Male" }
-                                                       onChange={ handleInputChange }
-                                                  />
-                                                  <label className="form-check-label" htmlFor="Male">
-                                                       Male
-                                                  </label>
-                                             </div>
-                                             <div className="form-check form-check-inline">
-                                                  <input
-                                                       className="form-check-input"
-                                                       type="radio"
-                                                       name="gender"
-                                                       id="Female"
-                                                       value="Female"
-                                                       checked={ formData.gender === "Female" }
-                                                       onChange={ handleInputChange }
-                                                  />
-                                                  <label className="form-check-label" htmlFor="Female">
-                                                       Female
-                                                  </label>
-                                             </div>
-                                             <div className="form-check form-check-inline">
-                                                  <input
-                                                       className="form-check-input"
-                                                       type="radio"
-                                                       name="gender"
-                                                       id="Others"
-                                                       value="Others"
-                                                       checked={ formData.gender === "Others" }
-                                                       onChange={ handleInputChange }
-                                                  />
-                                                  <label className="form-check-label" htmlFor="Others">
-                                                       Other
-                                                  </label>
-                                             </div>
+                                             { genderOptions.map((option) => (
+                                                  <div className="form-check form-check-inline" key={ option.value }>
+                                                       <input
+                                                            className="form-check-input"
+                                                            type="radio"
+                                                            name="gender"
+                                                            id={ option.value }
+                                                            value={ option.value }
+                                                            checked={ formData.gender === option.value } // Check against the value from formData
+                                                            onChange={ handleInputChange }
+                                                       />
+                                                       <label className="form-check-label" htmlFor={ option.value }>
+                                                            { option.label }
+                                                       </label>
+                                                  </div>
+                                             )) }
                                              { formErrors.gender && (
                                                   <small className="text-danger">{ formErrors.gender }</small>
                                              ) }
                                         </div>
-                                   </div>
-                              </div>
-                         </div>
-                    </div>
-
-                    <div className="row">
-                         {/* Blood Group */ }
-                         <div className="col-md-6">
-                              <div className="form-group row">
-                                   <div className="col mb-3">
-                                        <label htmlFor="blood_group" className="font-weight-bold">
-                                             Blood Group:
-                                        </label>
-                                        <input
-                                             type="text"
-                                             className="form-control no-focus-box-shadow"
-                                             placeholder="Blood Group"
-                                             name="blood_group"
-                                             value={ formData.blood_group }
-                                             onChange={ handleInputChange }
-                                        />
-                                        { formErrors.blood_group && (
-                                             <small className="text-danger">
-                                                  { formErrors.blood_group }
-                                             </small>
-                                        ) }
-                                   </div>
-                              </div>
-                         </div>
-                         {/* Marital Status */ }
-                         <div className="col-md-6">
-                              <div className="form-group row">
-                                   <div className="col mb-3">
-                                        <label htmlFor="marital_status" className="font-weight-bold">
-                                             Marital Status:
-                                        </label>
-                                        <input
-                                             type="text"
-                                             className="form-control no-focus-box-shadow"
-                                             placeholder="Marital Status"
-                                             name="marital_status"
-                                             value={ formData.marital_status }
-                                             onChange={ handleInputChange }
-                                        />
-                                        { formErrors.marital_status && (
-                                             <small className="text-danger">
-                                                  { formErrors.marital_status }
-                                             </small>
-                                        ) }
                                    </div>
                               </div>
                          </div>

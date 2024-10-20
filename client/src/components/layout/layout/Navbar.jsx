@@ -1,6 +1,4 @@
 import React from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBell } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
@@ -38,42 +36,9 @@ const NavbarComponent = () => {
                <div className="w-100 d-block">
                     <div className="row justify-content-between align-items-center">
                          <div className="col-8 d-lg-block d-none">
-                              <h1>Library Management Sysytem</h1>
+                              <h1 className="custom-font">Reading Hub</h1>
                          </div>
                          <div className="col-lg-4 col-12 d-flex align-items-center justify-content-end">
-                              <div className="mx-2">
-                                   <div className="dropdown">
-                                        <button
-                                             className="btn dropdown-toggle"
-                                             type="button"
-                                             id="dropdownMenuButton"
-                                             data-bs-toggle="dropdown"
-                                             aria-expanded="false"
-                                        >
-                                             { <FontAwesomeIcon icon={ faBell } className="fs-5" /> }
-                                        </button>
-                                        <ul
-                                             className="dropdown-menu dropdown-menu-end"
-                                             aria-labelledby="dropdownMenuButton"
-                                        >
-                                             { menuItems.map((item) => (
-                                                  <li key={ item.text } className="d-flex align-items-center">
-                                                       <button
-                                                            className="dropdown-item"
-                                                            href="/"
-                                                            onClick={ item.text === "Logout" ? handleLogout : null }
-                                                       >
-                                                            { item.text }
-                                                       </button>
-                                                  </li>
-                                             )) }
-                                        </ul>
-                                   </div>
-                                   {/* <Dropdown
-                                        icon={ <FontAwesomeIcon icon={ faBell } className="fs-5" /> }
-                                        menuItems={ menuItems }
-                                   /> */}
-                              </div>
                               <div>
                                    <div className="dropdown">
                                         <button

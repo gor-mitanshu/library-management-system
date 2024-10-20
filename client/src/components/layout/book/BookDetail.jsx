@@ -76,11 +76,14 @@ const BookDetail = () => {
      return (
           <Container className="mt-4">
                <Card>
-                    <Card.Img variant="top" src={ book.imageUrl } alt={ book.title } />
+                    <Card.Img variant="top" src={ book.images } alt={ book.title } height={ 200 } style={ { width: "20%" } } />
                     <Card.Body>
                          <Card.Title>{ book.title }</Card.Title>
                          <Card.Text><strong>Author:</strong> { book.author }</Card.Text>
-                         <Card.Text><strong>Genre:</strong> { book.genre }</Card.Text>
+                         <Card.Text>{ book.description }</Card.Text>
+                         <button type="button" className="btn btn-danger me-2" onClick={ () => navigate('/books') }>
+                              Cancel
+                         </button>
                          <Button
                               onClick={ borrowBook }
                               className={ `btn ${book.available ? 'btn-success' : 'btn-secondary'}` }

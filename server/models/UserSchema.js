@@ -11,6 +11,7 @@ const userSchema = new mongoose.Schema({
      gender: { type: String, required: true },
      dob: { type: Date, required: true },
      image: { type: String },
+     role: { type: String }
 });
 
 const User = mongoose.model('User', userSchema);

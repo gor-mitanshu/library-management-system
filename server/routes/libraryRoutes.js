@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Book = require('../models/BookSchema');
+const Users = require('../models/UserSchema');
 const authMiddleware = require('../middleware/authMiddleware');
 
 // Add Book (Protected)
@@ -79,8 +80,12 @@ router.post('/borrow/:id', authMiddleware, async (req, res) => {
                return res.status(404).send({ success: false, message: 'Book not available' });
           }
 
-          book.available = false;
+          // Update the book's status
+          book.available = false;  // Set available to false
+          book.borrowed = true;    // Set borrowed to true
+          book.returned = false;   // Set returned to false
           await book.save();
+
           res.status(200).send({ success: true, message: 'Book borrowed successfully', book });
      } catch (error) {
           res.status(500).send({ success: false, message: 'Error borrowing book', error });
@@ -92,14 +97,53 @@ router.post('/return/:id', authMiddleware, async (req, res) => {
      try {
           const book = await Book.findById(req.params.id);
           if (!book || book.available) {
-               return res.status(404).send({ success: false, message: 'Book not borrowed' });
+               return res.status(404).send({ success: false, message: 'Book not borrowed or not found' });
           }
 
-          book.available = true;
+          // Update the book's status
+          book.available = true;  // Set available to true
+          book.borrowed = false;  // Set borrowed to false
+          book.returned = true;   // Set returned to true
           await book.save();
+
           res.status(200).send({ success: true, message: 'Book returned successfully', book });
      } catch (error) {
           res.status(500).send({ success: false, message: 'Error returning book', error });
+     }
+});
+
+// List All Borrowed Books (Protected)
+router.get('/borrowed-books', authMiddleware, async (req, res) => {
+     try {
+          const borrowedBooks = await Book.find({ borrowed: true });
+          if (borrowedBooks.length === 0) {
+               return res.status(404).send({ success: false, message: 'No borrowed books found' });
+          }
+          res.status(200).send({ success: true, message: 'Borrowed books retrieved successfully', data: borrowedBooks });
+     } catch (error) {
+          res.status(500).send({ success: false, message: 'Error retrieving borrowed books', error });
+     }
+});
+
+// Stats
+router.get('/stats', async (req, res) => {
+     try {
+          const totalBooks = await Book.countDocuments();
+          const totalBorrowed = await Book.countDocuments({ borrowed: true });
+          const totalReturned = await Book.countDocuments({ available: true });
+          const totalUsers = await Users.countDocuments({ role: 'user' });
+          const availableBooks = totalBooks - totalBorrowed;
+
+          res.json({
+               totalBooks,
+               totalBorrowed,
+               totalReturned,
+               availableBooks,
+               totalUsers
+          });
+     } catch (error) {
+          console.error('Error fetching stats:', error);
+          res.status(500).json({ message: 'Internal server error' });
      }
 });
 

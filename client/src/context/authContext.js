@@ -7,7 +7,6 @@ export const AuthProvider = ({ children }) => {
 
      useEffect(() => {
           const token = localStorage.getItem('token');
-          console.log('Token on reload:', token);
           if (token) {
                setIsAuthenticated(true);
           }

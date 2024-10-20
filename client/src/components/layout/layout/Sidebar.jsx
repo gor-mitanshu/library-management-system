@@ -1,10 +1,8 @@
-import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link, useLocation } from "react-router-dom";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
-// import SearchBar from "../../UI/search/Search";
-// import karmLogo from "../../assets/images/karm-logo.png";
-// import kLogo from "../../assets/images/k-logo.svg";
+import Logo from '../../../assets/images/logo.png'
+import React from "react";
 
 const menuItems = [
      {
@@ -33,19 +31,14 @@ const menuItems = [
      {
           id: 4,
           title: "Borrowed Books",
-          link: "/borrowed-books",
+          link: "/borrowed",
           icon: "bi-calendar3",
           color: "purple",
-     },
+     }
 ];
 
 const Sidebar = ({ open, handleDrawerOpen }) => {
      const location = useLocation();
-     // const navigate = useNavigate();
-
-     // const handleAccordionClick = (item) => {
-     //   navigate(item.link);
-     // };
 
      return (
           <div
@@ -57,8 +50,6 @@ const Sidebar = ({ open, handleDrawerOpen }) => {
                     handleDrawerOpen(false);
                } }
           >
-               {/* <div className={`sidebar ${open ? "" : "sidebar-sm"}`}> */ }
-
                <div
                     style={ { minWidth: "260px" } }
                     className="d-flex align-items-center justify-content-between p-3"
@@ -67,17 +58,10 @@ const Sidebar = ({ open, handleDrawerOpen }) => {
                          onClick={ () => {
                               handleDrawerOpen(true);
                          } }
-                         style={ { width: "244px" } }
+                         style={ { width: "50%" } }
                          className="d-flex align-items-center py-2"
                     >
-                         <img src={ 'https://via.placeholder.com/600x800' } width={ "13%" } height={ "100%" } alt="" />
-                         <img
-                              src={ 'https://via.placeholder.com/600x800' }
-                              width={ "60%" }
-                              height={ "100%" }
-                              alt=""
-                              className="ms-3 karm-logo"
-                         />
+                         <img src={ Logo } width={ "50%" } height={ "100%" } alt="Logo" />
                     </Link>
                     <div>
                          { open ? (

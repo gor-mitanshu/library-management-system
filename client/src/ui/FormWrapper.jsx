@@ -4,7 +4,7 @@ import loginVector from "../assets/images/login-vector.jpg"
 const FormWrapper = ({ children, title }) => {
      return (
           <>
-               <div className="vh-100 container">
+               <div className="h-100vh container">
                     <div className="d-flex align-items-center justify-content-center h-100 position-relative">
                          <div className="col-12 col-md-10">
                               <div className="row align-items-center">
