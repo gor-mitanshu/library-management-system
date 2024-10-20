@@ -1,0 +1,11 @@
+.title {
+  font-weight: 500;
+  font-size: 1.125rem;
+  color: rgb(49 53 51 / 1);
+  font-family: IBM Plex Sans, sans-serif;
+  line-height: 1.35rem;
+}
+.subtitle {
+  font-size: 0.9rem !important;
+  color: rgb(116 120 141 / 1);
+}

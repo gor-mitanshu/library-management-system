@@ -1,9 +1,10 @@
-// src/components/BookDetail.jsx
-
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import Swal from 'sweetalert2';
+import { Card, Button, Container } from 'react-bootstrap';
+import 'react-toastify/dist/ReactToastify.css';
 
 const BookDetail = () => {
      const { id } = useParams();
@@ -36,21 +37,33 @@ const BookDetail = () => {
                     return;
                }
 
-               // Send the request with the token in the headers
-               await axios.post(`http://localhost:8080/api/library/borrow/${id}`, {}, {
-                    headers: {
-                         Authorization: `Bearer ${token}`,
-                    },
-               });
+               // Confirm borrow with SweetAlert
+               Swal.fire({
+                    title: 'Are you sure?',
+                    text: `Do you want to borrow "${book.title}"?`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, borrow it!',
+                    cancelButtonText: 'No, cancel',
+               }).then(async (result) => {
+                    if (result.isConfirmed) {
+                         // Send the request with the token in the headers
+                         await axios.post(`http://localhost:8080/api/library/borrow/${id}`, {}, {
+                              headers: {
+                                   Authorization: `Bearer ${token}`,
+                              },
+                         });
 
-               alert('Book borrowed successfully!');
-               navigate('/books'); // Redirect back to the book list
+                         Swal.fire('Success!', 'The book has been borrowed.', 'success');
+                         toast.success(`You borrowed "${book.title}" successfully!`);
+                         navigate('/books'); // Redirect back to the book list
+                    }
+               });
           } catch (error) {
                console.error('Error borrowing book:', error);
-               alert('Could not borrow the book. Please try again.');
+               toast.error('Could not borrow the book. Please try again.');
           }
      };
-
 
      if (loading) {
           return <div className="text-center mt-5"><div className="spinner-border" role="status"><span className="visually-hidden">Loading...</span></div></div>;
@@ -61,18 +74,23 @@ const BookDetail = () => {
      }
 
      return (
-          <div className="container mt-4">
-               <h2 className="mb-3">{ book.title }</h2>
-               <p><strong>Author:</strong> { book.author }</p>
-               <p><strong>Genre:</strong> { book.genre }</p>
-               <button
-                    onClick={ borrowBook }
-                    className={ `btn ${book.available ? 'btn-success' : 'btn-secondary'}` }
-                    disabled={ !book.available }
-               >
-                    { book.available ? 'Borrow Book' : 'Not Available' }
-               </button>
-          </div>
+          <Container className="mt-4">
+               <Card>
+                    <Card.Img variant="top" src={ book.imageUrl } alt={ book.title } />
+                    <Card.Body>
+                         <Card.Title>{ book.title }</Card.Title>
+                         <Card.Text><strong>Author:</strong> { book.author }</Card.Text>
+                         <Card.Text><strong>Genre:</strong> { book.genre }</Card.Text>
+                         <Button
+                              onClick={ borrowBook }
+                              className={ `btn ${book.available ? 'btn-success' : 'btn-secondary'}` }
+                              disabled={ !book.available }
+                         >
+                              { book.available ? 'Borrow Book' : 'Not Available' }
+                         </Button>
+                    </Card.Body>
+               </Card>
+          </Container>
      );
 };
 

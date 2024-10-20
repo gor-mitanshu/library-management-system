@@ -1,7 +1,6 @@
-// src/components/BorrowedBooks.jsx
-
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { Card, Container, Row, Col } from 'react-bootstrap';
 
 const BorrowedBooks = () => {
      const [borrowedBooks, setBorrowedBooks] = useState([]);
@@ -32,20 +31,22 @@ const BorrowedBooks = () => {
      }
 
      return (
-          <div className="container mt-4">
+          <Container className="mt-4">
                <h2>Your Borrowed Books</h2>
-               { borrowedBooks.length > 0 ? (
-                    <ul className="list-group mt-3">
-                         { borrowedBooks.map((book) => (
-                              <li key={ book._id } className="list-group-item">
-                                   { book.title } by { book.author }
-                              </li>
-                         )) }
-                    </ul>
-               ) : (
-                    <div className="mt-3 alert alert-info">No borrowed books found.</div>
-               ) }
-          </div>
+               <Row>
+                    { borrowedBooks.map((book) => (
+                         <Col key={ book._id } xs={ 12 } sm={ 6 } md={ 4 } lg={ 3 } className="mb-4">
+                              <Card>
+                                   <Card.Img variant="top" src={ book.imageUrl } alt={ book.title } />
+                                   <Card.Body>
+                                        <Card.Title>{ book.title }</Card.Title>
+                                        <Card.Text>by { book.author }</Card.Text>
+                                   </Card.Body>
+                              </Card>
+                         </Col>
+                    )) }
+               </Row>
+          </Container>
      );
 };
 

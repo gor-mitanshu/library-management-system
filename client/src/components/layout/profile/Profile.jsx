@@ -1,67 +1,360 @@
-import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import React, { useCallback, useEffect, useRef, useState } from 'react'
+import Swal from 'sweetalert2';
+import Card from '../../../ui/Card';
+import ProfileForm from './forms/ProfileForm';
 import { toast } from 'react-toastify';
-import { useNavigate } from 'react-router-dom';
+import ContactForm from './forms/ContactForm';
+import AddressForm from './forms/AddressForm';
+
+const profileInitialState = {
+     firstName: "",
+     lastName: "",
+     dob: "",
+     gender: "",
+     blood_group: "",
+     marital_status: "",
+     email: "",
+     phone: "",
+     current_address: "",
+}
 
 const Profile = () => {
-     const [profile, setProfile] = useState({
-          name: '',
-          email: '',
-          phone: '',
+     const [editMode, setEditMode] = useState({
+          personalProfile: false,
+          contactInformation: false,
+          address: false,
      });
 
-     const [loading, setLoading] = useState(true);
-     const navigate = useNavigate();
+     const [formData, setFormData] = useState({ ...profileInitialState, });
+     const [user, setUser] = useState({})
+     const initialUser = useRef({ ...profileInitialState, });
+     const [formErrors, setFormErrors] = useState(profileInitialState);
 
-     // Fetch the profile from the API
-     useEffect(() => {
-          const fetchProfile = async () => {
-               const token = localStorage.getItem('token');
-               if (!token) {
-                    toast.error('Please log in first');
-                    navigate('/login');
-                    return;
+     const handleInputChange = (e) => {
+          const { name, value } = e.target;
+          setFormData({
+               ...formData,
+               [name]: value,
+          });
+
+          setFormErrors({
+               ...formErrors,
+               [name]: "",
+          });
+     };
+
+     // Handle Edit Click
+     const handleEditClick = (section) => {
+          setEditMode((prevEditMode) => ({
+               ...prevEditMode,
+               [section]: true,
+          }));
+     };
+     //Handle Cancel Click
+     const handleCancelClick = (section) => {
+          if (hasChanges(formData)) {
+               Swal.fire({
+                    title: "Are you sure?",
+                    text: "Changes will not be saved.",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Don't Save!",
+               }).then((result) => {
+                    if (result.isConfirmed) {
+                         setFormData(user)
+                         setEditMode((prevEditMode) => ({
+                              ...prevEditMode,
+                              [section]: false,
+                         }));
+
+                         // Reset validation errors for all fields in the specific card
+                         if (section === "personalProfile") {
+                              setFormErrors((prevFormErrors) => ({
+                                   ...prevFormErrors,
+                                   firstName: "",
+                                   lastName: "",
+                                   dob: "",
+                                   gender: "",
+                                   blood_group: "",
+                                   marital_status: "",
+                              }));
+                         } else if (section === "contactInformation") {
+                              setFormErrors((prevFormErrors) => ({
+                                   ...prevFormErrors,
+                                   email: "",
+                                   phone: "",
+                              }));
+                         } else if (section === "address") {
+                              setFormErrors((prevFormErrors) => ({
+                                   ...prevFormErrors,
+                                   current_address: "",
+                              }));
+                         }
+                    }
+               });
+          } else {
+               setFormData(user)
+               setEditMode((prevEditMode) => ({
+                    ...prevEditMode,
+                    [section]: false,
+               }));
+
+               // Reset validation errors for all fields in the specific card
+               if (section === "personalProfile") {
+                    setFormErrors((prevFormErrors) => ({
+                         ...prevFormErrors,
+                         firstName: "",
+                         lastName: "",
+                         dob: "",
+                         gender: "",
+                         blood_group: "",
+                         marital_status: "",
+                    }));
+               } else if (section === "contactInformation") {
+                    setFormErrors((prevFormErrors) => ({
+                         ...prevFormErrors,
+                         email: "",
+                         phone: "",
+                    }));
+               } else if (section === "address") {
+                    setFormErrors((prevFormErrors) => ({
+                         ...prevFormErrors,
+                         current_address: "",
+                    }));
                }
+          }
+     };
 
+     // Get the User
+     const getUser = useCallback(async () => {
+          const accessToken = localStorage.getItem('token');
+          if (accessToken) {
+               const res = await axios.get(`${process.env.REACT_APP_API}/api/auth/profile`, {
+                    headers: { Authorization: `Bearer ${accessToken}` },
+               });
+               const { user } = res.data;
+               setFormData(user);
+               setUser(user);
+               initialUser.current = user
+          }
+     }, []);
+
+     useEffect(() => {
+          getUser();
+     }, [getUser]);
+
+     // Update the data
+     const handleSubmit = async (e) => {
+          e.preventDefault();
+          // Error Handling
+          let errors = {};
+          // Validate each field based on the section
+          // Personal Profile Section
+          if (editMode.personalProfile) {
+               if (!formData.firstName.trim()) {
+                    errors.firstName = "First name is required";
+               }
+               if (!formData.lastName.trim()) {
+                    errors.lastName = "Last name is required";
+               }
+               if (!formData.dob) {
+                    errors.dob = "Date of birth is required";
+               }
+               if (!formData.gender) {
+                    errors.gender = "Gender is required";
+               }
+               if (!formData.blood_group.trim()) {
+                    errors.blood_group = "Blood group is required";
+               }
+               if (!formData.marital_status.trim()) {
+                    errors.marital_status = "Marital status is required";
+               }
+          }
+          // Contact Information Section
+          if (editMode.contactInformation) {
+               if (!/\S+@\S+\.\S+/.test(formData.email)) {
+                    errors.email = "Invalid email address";
+               }
+               if (!/^\d{10}$/.test(formData.phone)) {
+                    errors.phone = "Phone number must be 10 digits";
+               }
+          }
+          // Address Section
+          if (editMode.address) {
+               if (!formData.current_address) {
+                    errors.current_address = "Address is required";
+               }
+          }
+
+          setFormErrors(errors);
+          // If there are no errors, you can submit the form
+          if (Object.keys(errors).length === 0) {
+               const accessToken = localStorage.getItem('token');
                try {
-                    const response = await axios.get('http://localhost:8080/api/auth/profile', {
-                         headers: {
-                              Authorization: `Bearer ${token}`,
-                         },
-                    });
-                    if (response.data.success) {
-                         setProfile(response.data.user);
-                    } else {
-                         toast.error(response.data.message);
-                         navigate('/login');
+                    if (accessToken) {
+                         const response = await axios.put(
+                              `${process.env.REACT_APP_API}/api/auth/update-profile`, formData, {
+                              headers: {
+                                   Authorization: `Bearer ${accessToken}`,
+                              },
+                         }
+                         );
+                         if (response) {
+                              toast.success(response.data.message);
+                              getUser();
+                              setEditMode({
+                                   personalProfile: false,
+                                   contactInformation: false,
+                                   address: false,
+                              });
+                         }
                     }
                } catch (error) {
-                    toast.error('Error fetching profile');
-                    console.error(error);
-                    navigate('/login');
-               } finally {
-                    setLoading(false);
+                    console.error("Error updating profile:", error);
                }
-          };
+          }
+     };
 
-          fetchProfile();
-     }, [navigate]);
+     const hasChanges = (changedData) => {
+          return (
+               changedData.firstName !== initialUser.current.firstName ||
+               changedData.lastName !== initialUser.current.lastName ||
+               changedData.dob !== initialUser.current.dob ||
+               changedData.gender !== initialUser.current.gender ||
+               changedData.blood_group !== initialUser.current.blood_group ||
+               changedData.marital_status !== initialUser.current.marital_status ||
+               changedData.email !== initialUser.current.email ||
+               changedData.phone !== initialUser.current.phone ||
+               changedData.current_address !== initialUser.current.current_address
+          );
+     };
 
-     if (loading) {
-          return <div>Loading...</div>;
-     }
+     const formatedDate = user.dob;
+     const newDate = new Date(formatedDate);
 
      return (
-          <div className="profile-container">
-               <h2>User Profile</h2>
-               <div className="profile-info">
-                    <p><strong>Name:</strong> { profile.name }</p>
-                    <p><strong>Email:</strong> { profile.email }</p>
-                    <p><strong>Phone:</strong> { profile.phone }</p>
-               </div>
-               <button className="btn btn-primary" onClick={ () => navigate('/update-profile') }>Edit Profile</button>
-          </div>
-     );
-};
+          <div>
+               <div>
+                    <form onSubmit={ handleSubmit }>
+                         <div className="row">
+                              {/* Card 1 */ }
+                              <div className="col-md-6">
+                                   {/* Personal Profile */ }
+                                   <Card
+                                        title="Personal Profile"
+                                        editMode={ editMode.personalProfile }
+                                        handleEditClick={ () => handleEditClick("personalProfile") }
+                                        handleCancelClick={ () => handleCancelClick("personalProfile") }
+                                   >
+                                        { editMode.personalProfile ? (
+                                             <>
+                                                  <ProfileForm
+                                                       formData={ formData }
+                                                       formErrors={ formErrors }
+                                                       handleInputChange={ handleInputChange }
+                                                       hasChanges={ hasChanges }
+                                                       handleCancel={ () => handleCancelClick("personalProfile") }
+                                                  />
+                                             </>
+                                        ) : (
+                                             <div className="user-details d-flex align-items-center flex-wrap">
+                                                  <div className="py-4 py-xl-0 col-12 col-xl-5 text-center">
+                                                       <img
+                                                            src={ 'https://via.placeholder.com/600x800' }
+                                                            alt="User"
+                                                            className="h-100 w-75 rounded-circle"
+                                                       />
+                                                  </div>
+                                                  <div className="col-12 col-xl-7">
+                                                       <p>
+                                                            <strong>Name: </strong>{ " " }
+                                                            { user.firstName && user.lastName
+                                                                 ? user.firstName + " " + user.lastName
+                                                                 : "-" }
+                                                       </p>
+                                                       <p>
+                                                            <strong>Date of Birth: </strong>{ " " }
+                                                            { user.dob
+                                                                 ? newDate.toLocaleDateString("en-US", {
+                                                                      day: "numeric",
+                                                                      month: "short",
+                                                                      year: "numeric",
+                                                                 })
+                                                                 : "-" }
+                                                       </p>
+                                                       <p>
+                                                            <strong>Gender: </strong>
+                                                            { user.gender ? user.gender : "-" }
+                                                       </p>
+                                                  </div>
+                                             </div>
+                                        ) }
+                                   </Card>
 
-export default Profile;
+                                   {/* Contact Information */ }
+                                   <Card
+                                        title="Contact Information"
+                                   // editMode={editMode.contactInformation}
+                                   // handleEditClick={() => handleEditClick("contactInformation")}
+                                   // handleCancelClick={() => handleCancelClick("contactInformation")}
+                                   >
+                                        { editMode.contactInformation ? (
+                                             <>
+                                                  <ContactForm
+                                                       formData={ formData }
+                                                       formErrors={ formErrors }
+                                                       handleInputChange={ handleInputChange }
+                                                       handleCancel={ () => handleCancelClick("personalProfile") }
+                                                  />
+                                             </>
+                                        ) : (
+                                             <>
+                                                  <p>
+                                                       <strong>Email:</strong> { user.email }
+                                                  </p>
+                                                  <p>
+                                                       <strong>Phone Number:</strong> { user.phone }
+                                                  </p>
+                                             </>
+                                        ) }
+                                   </Card>
+                              </div>
+
+                              {/* Card 2 */ }
+                              <div className="col-md-6">
+                                   {/* Address */ }
+                                   <Card
+                                        title="Address"
+                                        editMode={ editMode.address }
+                                        handleEditClick={ () => handleEditClick("address") }
+                                        handleCancelClick={ () => handleCancelClick("address") }
+                                   >
+                                        { editMode.address ? (
+                                             <>
+                                                  <AddressForm
+                                                       formData={ formData }
+                                                       formErrors={ formErrors }
+                                                       handleInputChange={ handleInputChange }
+                                                       handleCancel={ () => handleCancelClick("address") }
+                                                  />
+                                             </>
+                                        ) : (
+                                             <>
+                                                  <p>
+                                                       { user.current_address ? user.current_address : "-" }
+                                                  </p>
+                                             </>
+                                        ) }
+                                   </Card>
+                              </div>
+                         </div>
+                    </form>
+               </div>
+          </div>
+     )
+}
+
+export default Profile

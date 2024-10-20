@@ -1,15 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import { Form, Button, Container, Row, Col, Card, Spinner } from 'react-bootstrap';
-import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { toast } from 'react-toastify';
-import '../../assets/styles/login.css';
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { toast } from "react-toastify";
+import FormWrapper from "../../ui/FormWrapper";
+// import "../../UI/formWrapper/FormWrapper.css";
+import "../../ui/styles/formWrapper.css";
 
 const Login = () => {
      const [formData, setFormData] = useState({ email: '', password: '', rememberMe: false });
      const [errors, setErrors] = useState({});
      const [loading, setLoading] = useState(false);
+     const [showPassword, setShowPassword] = useState(false);
      const navigate = useNavigate();
+
+     const handleClickShowPassword = () => setShowPassword((prev) => !prev);
 
      useEffect(() => {
           const savedEmail = localStorage.getItem('email');
@@ -87,86 +91,76 @@ const Login = () => {
      };
 
      return (
-          <Container fluid className="d-flex justify-content-center align-items-center" style={ { minHeight: '100vh' } }>
-               <Row className="w-100">
-                    <Col md={ 6 } className="d-none d-md-block p-0">
-                         <div className="login-image-container">
-                              <img
-                                   src="https://via.placeholder.com/600x800"
-                                   alt="Login"
-                                   className="img-fluid vh-100 w-100"
-                                   style={ { objectFit: 'cover' } }
-                              />
-                         </div>
-                    </Col>
+          <FormWrapper title={ "Welcome back :)" }>
+               <div>
+                    <div className="d-flex flex-column">
+                         <form onSubmit={ handleSubmit }>
+                              <div className="text-start">
+                                   <div
+                                        className={ `form-input-wrapper ${errors.email ? "error-form-input" : ""
+                                             }` }
+                                   >
+                                        <i className="bi bi-person-fill prefix-icon"></i>
+                                        <input
+                                             type="text"
+                                             className="form-input"
+                                             id="email"
+                                             placeholder="Enter Your Email"
+                                             name="email"
+                                             value={ formData.email }
+                                             onChange={ (e) => handleChange(e, "email") }
+                                        />
+                                   </div>
+                                   <div className="input-error">{ errors.email }</div>
+                              </div>
+                              <div className="text-start">
+                                   <div
+                                        className={ `form-input-wrapper ${errors.password ? "error-form-input" : ""
+                                             }` }
+                                   >
+                                        <i className="bi bi-lock-fill prefix-icon"></i>
+                                        <input
+                                             type={ showPassword ? "text" : "password" }
+                                             className="form-input"
+                                             id="password"
+                                             placeholder="Enter Your Password"
+                                             name="password"
+                                             value={ formData.password }
+                                             onChange={ (e) => handleChange(e, "password") }
+                                        />
+                                        { !showPassword ? (
+                                             <i
+                                                  onClick={ handleClickShowPassword }
+                                                  className="bi bi-eye-fill postfix-icon"
+                                             ></i>
+                                        ) : (
+                                             <i
+                                                  onClick={ handleClickShowPassword }
+                                                  className="bi bi-eye-slash-fill postfix-icon"
+                                             ></i>
+                                        ) }
+                                   </div>
+                                   <div className="input-error">{ errors.password }</div>
+                              </div>
 
-                    <Col md={ 6 } className="d-flex align-items-center justify-content-center">
-                         <Card className="w-75">
-                              <Card.Body>
-                                   <h3 className="text-center mb-4">Login</h3>
-                                   <Form onSubmit={ handleSubmit }>
-                                        { errors.form && <p className="text-danger text-center">{ errors.form }</p> }
-                                        <Form.Group className="mb-3" controlId="formEmail">
-                                             <Form.Label>Email address</Form.Label>
-                                             <Form.Control
-                                                  type="email"
-                                                  placeholder="Enter email"
-                                                  name="email"
-                                                  value={ formData.email }
-                                                  onChange={ handleChange }
-                                                  isInvalid={ !!errors.email }
-                                             />
-                                             <Form.Control.Feedback type="invalid">
-                                                  { errors.email }
-                                             </Form.Control.Feedback>
-                                        </Form.Group>
+                              <div>
+                                   <Link to="/forgetpassword" className="text-decoration-none">
+                                        Forgot Password?
+                                   </Link>
+                              </div>
 
-                                        <Form.Group className="mb-3" controlId="formPassword">
-                                             <Form.Label>Password</Form.Label>
-                                             <Form.Control
-                                                  type="password"
-                                                  placeholder="Enter password"
-                                                  name="password"
-                                                  value={ formData.password }
-                                                  onChange={ handleChange }
-                                                  isInvalid={ !!errors.password }
-                                             />
-                                             <Form.Control.Feedback type="invalid">
-                                                  { errors.password }
-                                             </Form.Control.Feedback>
-                                        </Form.Group>
-
-                                        <div className="d-flex justify-content-between align-items-center mb-3">
-                                             <Form.Check
-                                                  type="checkbox"
-                                                  label="Remember Me"
-                                                  name="rememberMe"
-                                                  checked={ formData.rememberMe }
-                                                  onChange={ handleChange }
-                                             />
-                                             <Link to="/forgot-password" className="text-decoration-none">
-                                                  Forgot Password?
-                                             </Link>
-                                        </div>
-
-                                        <Button variant="primary" type="submit" className="w-100 mb-3" disabled={ loading }>
-                                             { loading ? <Spinner animation="border" size="sm" /> : 'Login' }
-                                        </Button>
-
-                                        <div className="text-center">
-                                             <p>
-                                                  Don't have an account?{ ' ' }
-                                                  <Link to="/signup" className="text-decoration-none">
-                                                       Sign up
-                                                  </Link>
-                                             </p>
-                                        </div>
-                                   </Form>
-                              </Card.Body>
-                         </Card>
-                    </Col>
-               </Row>
-          </Container>
+                              <div className="mt-4">
+                                   <button type="submit" className="btn btn-primary px-4" disabled={ loading }>
+                                        Sign in
+                                   </button>
+                                   <Link to={ "/register" } className="btn btn-light px-4 ms-3">
+                                        Create Account
+                                   </Link>
+                              </div>
+                         </form>
+                    </div>
+               </div>
+          </FormWrapper>
      );
 };
 

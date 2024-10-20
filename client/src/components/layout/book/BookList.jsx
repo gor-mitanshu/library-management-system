@@ -1,8 +1,7 @@
-// src/components/BookList.jsx
-
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import { Card, Button, Container, Row, Col } from 'react-bootstrap';
 
 const BookList = () => {
      const [books, setBooks] = useState([]);
@@ -27,18 +26,24 @@ const BookList = () => {
      }
 
      return (
-          <div className="container mt-4">
-               <h2>Available Books</h2>
-               <ul className="list-group">
+          <Container className="mt-4">
+               <Row>
                     { books.map((book) => (
-                         <li className="list-group-item" key={ book._id }>
-                              <Link to={ `/books/${book._id}` } className="text-decoration-none">
-                                   { book.title } by { book.author }
-                              </Link>
-                         </li>
+                         <Col key={ book._id } xs={ 12 } sm={ 6 } md={ 4 } lg={ 3 } className="mb-4">
+                              <Card>
+                                   <Card.Img variant="top" src={ book.imageUrl } alt={ book.title } />
+                                   <Card.Body>
+                                        <Card.Title>{ book.title }</Card.Title>
+                                        <Card.Text>by { book.author }</Card.Text>
+                                        <Link to={ `/books/${book._id}` }>
+                                             <Button variant="primary">View Details</Button>
+                                        </Link>
+                                   </Card.Body>
+                              </Card>
+                         </Col>
                     )) }
-               </ul>
-          </div>
+               </Row>
+          </Container>
      );
 };
 
